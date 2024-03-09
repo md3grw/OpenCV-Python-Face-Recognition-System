@@ -1,14 +1,13 @@
-from OpenCV import OpenCV
+import OpenCV
+from TelegramBot.bot import TelegramBot
 
 class ApplicationManager:
-    @classmethod
+
+    def launch_tgbot():
+        bot = TelegramBot()
+        bot.launch_bot()
+
     def start(cls):
-
-        obj = OpenCV()
-
-        #add: create "remote control" for the camera, u could enable face recognition in the TG bot
-        obj.process_data() #launch the process
-        obj.video_capture.release()
-        obj.cv2.destroyAllWindows()
+        ApplicationManager.launch_tgbot()
         return
-    
+

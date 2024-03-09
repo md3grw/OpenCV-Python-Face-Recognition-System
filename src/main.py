@@ -1,3 +1,5 @@
 from ApplicationManager import ApplicationManager
 
-ApplicationManager.start()
+if __name__ == "__main__": 
+    manager = ApplicationManager()
+    manager.start()
