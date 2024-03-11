@@ -1,10 +1,12 @@
 import cv2
+import time
+import os
+import app_config
 
 class OpenCV:
     face_classifier = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
-
     video_capture = cv2.VideoCapture(0)
 
     @staticmethod
@@ -16,22 +18,30 @@ class OpenCV:
         return faces
 
     @staticmethod
-    def process_data():
-        while True:
-            result, video_frame = OpenCV.video_capture.read()  # read frames from the video
-            if result is False:
-                break  # terminate the loop if the frame is not read successfully
+    def record_video(exit_flag):
+        video_codec = cv2.VideoWriter_fourcc(*'mp4v')
+        recording_duration = 15  # seconds
+        frames_per_second = 24.0
+        output_dir = os.path.expanduser(app_config.AppConfig.VIDEO_FOLDER)
+        os.makedirs(output_dir, exist_ok=True)
 
-            faces = OpenCV.detect_bounding_box(
-                video_frame
-            )  # apply the function we created to the video frame
+        while not exit_flag.is_set():
+            current_time = time.strftime('%Y-%m-%d_%H-%M-%S')
+            output_path = os.path.join(output_dir, f'recording_{current_time}.mp4')
+            resolution = (int(OpenCV.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)),
+                          int(OpenCV.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+            video_writer = cv2.VideoWriter(output_path, video_codec, frames_per_second, resolution)
 
-            cv2.imshow(
-                "My Face Detection Project", video_frame
-            )  # display the processed frame in a window named "My Face Detection Project"
+            start_time = time.time()
+            while time.time() - start_time < recording_duration:
+                result, video_frame = OpenCV.video_capture.read()
+                if not result:
+                    break
+                faces = OpenCV.detect_bounding_box(video_frame)
+                video_writer.write(video_frame)
 
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
+            video_writer.release()
+            print(f"Video saved: {output_path}")
+            time.sleep(1)  # Wait for 1 second before starting the next recording
 
         OpenCV.video_capture.release()
-        cv2.destroyAllWindows()
