@@ -23,23 +23,22 @@ class TelegramBot:
         app.run_polling(poll_interval=3)
 
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await update.message.reply_text("Test")
+        await update.message.reply_text("Hello there! 👋 Welcome to SpectatorBot! I'm here to assist you with operating your videocamera. \nhttps://github.com/md3grw/OpenCV-Python-Face-Recognition-System) \nTo get started, feel free to explore the available commands. If you ever need help, just type /help. Enjoy your time with SpectatorBot!")
 
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await update.message.reply_text("Test")
+        await update.message.reply_text("Type /send_video to get the videos.\nType /set_longevity (amount of second) to set the longevity of videos.\n*The result is a bunch of videos with the certain longevity.\n*After 100MB worth of videos, they are being sent to user and later deleting.")
+
+    async def send_photo(self, update: Update, context: ContextTypes.DEFAULT_TYPE, path: str):
+        with open(path, 'rb') as photo:
+            await context.bot.send_photo(chat_id=update.effective_chat.id, photo=photo)
 
     async def send_video_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         video_folder = app_config.AppConfig.VIDEO_FOLDER
+        video_files = [os.path.join(video_folder, f) for f in os.listdir(video_folder) if os.path.isfile(os.path.join(video_folder, f)) and f.lower().endswith(('.mp4', '.avi', '.mkv'))]
 
-        # Get a list of all files in the video folder
-        video_files = [f for f in os.listdir(video_folder) if os.path.isfile(os.path.join(video_folder, f))]
-
-        for video_file in video_files:
-            video_path = os.path.join(video_folder, video_file)
-
-            # Check if the file is a video (you might want to improve this check)
-            if video_file.endswith(('.mp4', '.avi', '.mkv')):
-                await update.message.reply_video(video_path)
+        for video_path in video_files:
+            with open(video_path, 'rb') as video:
+                await context.bot.send_video(chat_id=update.effective_chat.id, video=video)
 
     # errors
     async def error(self, update: Update, context: ContextTypes.DEFAULT_TYPE):

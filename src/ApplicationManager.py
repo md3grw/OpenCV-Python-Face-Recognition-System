@@ -6,7 +6,8 @@ from TelegramBot.bot import TelegramBot
 class ApplicationManager:
     @staticmethod
     def launch_camera(exit_flag):
-        OpenCV.record_video(exit_flag)
+        opencv = OpenCV()
+        opencv.record_video(exit_flag)
 
     @staticmethod
     def launch_tgbot():
