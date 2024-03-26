@@ -2,6 +2,7 @@ import cv2
 import time
 import os
 import app_config
+from TelegramBot import bot
 
 class OpenCV:
     face_classifier = cv2.CascadeClassifier(
@@ -43,7 +44,7 @@ class OpenCV:
 
         if self.previous_frame is None:
             self.previous_frame = gray_frame
-            return motion_detected, frame  # Return None for threshold
+            return motion_detected, frame 
 
         frame_delta = cv2.absdiff(self.previous_frame, gray_frame)
         threshold = cv2.threshold(frame_delta, 30, 255, cv2.THRESH_BINARY)[1]
@@ -65,7 +66,7 @@ class OpenCV:
 
     def record_video(self, exit_flag):
         video_codec = cv2.VideoWriter_fourcc(*'mp4v')
-        recording_duration = 15  # seconds
+        recording_duration = bot.VIDEO_LENGTH  # seconds
         frames_per_second = 24.0
         output_dir = os.path.expanduser(app_config.AppConfig.VIDEO_FOLDER)
         os.makedirs(output_dir, exist_ok=True)
@@ -90,7 +91,7 @@ class OpenCV:
                 print(f"Motion detected status: {motion_detected}")
 
                 if motion_detected:
-                    #photo_path = OpenCV.capture_photo()
+                    photo_path = OpenCV.capture_photo()
                     
                     if len(faces) > 0:
                         print("Face and motion detected!")
