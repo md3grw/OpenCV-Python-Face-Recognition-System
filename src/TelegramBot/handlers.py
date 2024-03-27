@@ -6,11 +6,8 @@ import TelegramBot.config as config
 #responses
 def handle_response(text: str) -> str:
     processed: str = text.lower()
-    
-    if 'hello' in text:
-        return 'hi mate'
-    
-    return 'wdym'
+
+    return 'Type /help'
 
 #messages
 async def handle_message(update: Update, context: ContextTypes. DEFAULT_TYPE):
